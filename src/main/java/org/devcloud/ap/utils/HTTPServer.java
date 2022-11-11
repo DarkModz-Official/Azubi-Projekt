@@ -19,6 +19,7 @@ import java.util.Objects;
 public class HTTPServer {
     private static HttpServer server;
     private static final Logger logger = LoggerFactory.getLogger(HTTPServer.class);
+    private static Config config = new Config();
 
     /**
      * Starts the HTTP server
@@ -26,7 +27,8 @@ public class HTTPServer {
      * @throws IOException for the server
      */
     public static void startServer() throws IOException {
-        server = HttpServer.create(new InetSocketAddress("127.0.0.1", 8001), 0); //Create a new server on port 8001
+        config.initConfig();
+        server = HttpServer.create(new InetSocketAddress(config.serverhost, config.serverport), 0); //Create a new server on port 8001
         server.createContext("/", new APIHandler()); //Create a new context for the API
 
         Base.register(server);
@@ -57,7 +59,7 @@ public class HTTPServer {
 
             httpExchange.sendResponseHeaders(200, response.length());
             OutputStream outputStream = httpExchange.getResponseBody();
-            for(char write : response.toCharArray())
+            for (char write : response.toCharArray())
                 outputStream.write(write);
             outputStream.close();
 
